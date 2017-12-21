@@ -9,9 +9,7 @@ Loading and preprocessing the data
 2.  Process/transform the data (if necessary) into a format suitable for
     your analysis
 
-<!-- -->
-
-    activity$date <- as.POSIXct(activity$date, format="%Y-%m-%d")
+        activity$date <- as.POSIXct(activity$date, format="%Y-%m-%d")
 
 What is mean total number of steps taken per day?
 -------------------------------------------------
@@ -97,19 +95,17 @@ What is mean total number of steps taken per day?
 3.  Calculate and report the mean and median of the total number of
     steps taken per day
 
-<!-- -->
+        mean(sum_data$`Number of Steps`)
 
-    mean(sum_data$`Number of Steps`)
+        ## [1] 9354.23
 
-    ## [1] 9354.23
+        median(sum_data$`Number of Steps`)
 
-    median(sum_data$`Number of Steps`)
+        ## [1] 10395
 
-    ## [1] 10395
+    The mean number of steps taken per day is 9,354.
 
-The mean number of steps taken per day is 9,354.
-
-The median number of steps taken per day is 10,395.
+    The median number of steps taken per day is 10,395.
 
 What is the average daily activity pattern?
 -------------------------------------------
@@ -117,7 +113,7 @@ What is the average daily activity pattern?
 1.  Make a time series plot of the 5-minute interval (x-axis) and the
     average number of steps taken, averaged across all days (y-axis)
 
-        mean_data <- aggregate(activity$steps, by=list(activity$interval), FUN=mean,        na.rm=TRUE)
+        mean_data <- aggregate(activity$steps, by=list(activity$interval), FUN=mean,              na.rm=TRUE)
         colnames(mean_data) <- c("Interval", "Average Number of Steps")
         plot(mean_data$Interval, mean_data$`Average Number of Steps`, type="l", col="purple",     lwd=2, xlab="Interval", ylab="Average Number of Steps", main="Average Number of Steps     Per Interval")
 
@@ -126,15 +122,18 @@ What is the average daily activity pattern?
 2.  Which 5-minute interval, on average across all the days in the
     dataset, contains the maximum number of steps?
 
-<!-- -->
+        max_steps <- which(mean_data$`Average Number of Steps` == max(mean_data$`Average          Number of Steps`))
 
-    max_steps <- which(mean_data$`Average Number of Steps` == max(mean_data$`Average Number of Steps`))
-    max_interval <- mean_data[max_steps,1]
-    max_interval
+        ## Warning in max(mean_data$`Average Number of Steps`): no non-missing
+        ## arguments to max; returning -Inf
 
-    ## [1] 835
+        max_interval <- mean_data[max_steps,1]
+        max_interval
 
-The 5-minute interval that contains the maximum number of steps is 835.
+        ## integer(0)
+
+    The 5-minute interval that contains the maximum number of steps
+    is 835.
 
 Imputing missing values
 -----------------------
@@ -184,31 +183,30 @@ Imputing missing values
     part of the assignment? What is the impact of imputing missing data
     on the estimates of the total daily number of steps?
 
-<!-- -->
+        sum_data2 <- aggregate(activity$steps, by=list(activity$date), FUN=sum)
+        colnames(sum_data2) <- c("Date", "Number of Steps")
+        hist(sum_data2$`Number of Steps`, breaks=seq(from=0, to=25000, by=2500), col="purple",     xlab="Number of Steps", ylim = c(0,30), main = "Total Number of Steps Per Day with NA     Replaced by Mean")
 
-    sum_data2 <- aggregate(activity$steps, by=list(activity$date), FUN=sum)
-    colnames(sum_data2) <- c("Date", "Number of Steps")
-    hist(sum_data2$`Number of Steps`, breaks=seq(from=0, to=25000, by=2500), col="purple", xlab="Number of Steps", ylim = c(0,30), main = "Total Number of Steps Per Day with NA Replaced by Mean")
+    ![](PA1_template_files/figure-markdown_strict/unnamed-chunk-13-1.png)
 
-![](PA1_template_files/figure-markdown_strict/unnamed-chunk-13-1.png)
+        mean(sum_data2$`Number of Steps`)
 
-    mean(sum_data2$`Number of Steps`)
+        ## [1] 10766.19
 
-    ## [1] 10766.19
+        median(sum_data2$`Number of Steps`)
 
-    median(sum_data2$`Number of Steps`)
+        ## [1] 10766.19
 
-    ## [1] 10766.19
+    The new mean number of steps taken per day is 10,766 compared to the
+    old mean of 9,354. This creates a difference of 1,412 more steps
+    per day.
 
-The new mean number of steps taken per day is 10,766 compared to the old
-mean of 9,354. This creates a difference of 1,412 more steps per day.
+    The new median number of steps taken per day is 10,766 compared to
+    the old median of 10,395. This creates a difference of 371 more
+    steps per day.
 
-The new median number of steps taken per day is 10,766 compared to the
-old median of 10,395. This creates a difference of 371 more steps per
-day.
-
-There is less frequency of 0 number of steps, but the overall shape of
-the distribution has not changed.
+    There is less frequency of 0 number of steps, but the overall shape
+    of the distribution has not changed.
 
 Are there differences in activity patterns between weekdays and weekends?
 -------------------------------------------------------------------------
@@ -237,11 +235,9 @@ Are there differences in activity patterns between weekdays and weekends?
     interval (x-axis) and the average number of steps taken, averaged
     across all weekday days or weekend days (y-axis).
 
-<!-- -->
+        library(lattice)
+        mean_data2 <- aggregate(activity$steps, by=list(activity$daytype, activity$day,           activity$interval), mean)
+        colnames(mean_data2) <- c("Day_Type", "Day", "Interval", "Average_Number_of_Steps")
+        xyplot(Average_Number_of_Steps ~ Interval | Day_Type, mean_data2, type="l", lwd=1,        xlab="Interval", ylab="Average Number of Steps", main="Average Number of Steps Per        Interval by Day Type", layout=c(1,2))
 
-    library(lattice)
-    mean_data2 <- aggregate(activity$steps, by=list(activity$daytype, activity$day, activity$interval), mean)
-    colnames(mean_data2) <- c("Day_Type", "Day", "Interval", "Average_Number_of_Steps")
-    xyplot(Average_Number_of_Steps ~ Interval | Day_Type, mean_data2, type="l", lwd=1, xlab="Interval", ylab="Average Number of Steps", main="Average Number of Steps Per Interval by Day Type", layout=c(1,2))
-
-![](PA1_template_files/figure-markdown_strict/unnamed-chunk-16-1.png)
+    ![](PA1_template_files/figure-markdown_strict/unnamed-chunk-16-1.png)
